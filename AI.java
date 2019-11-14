@@ -27,5 +27,3 @@ public class AI {
 //			cups.get(i).learn(won);
 //			System.out.println(i + " = " + cups.get(i));
 //		}
-	}
-}
