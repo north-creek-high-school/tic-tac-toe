@@ -56,8 +56,9 @@ public class DrawGrid {
 				Game.getMap()[cell] = shape == "X" ? 1 : 2;
 				shape = shape == "X" ? "O" : "X";
 			}
-
 			isGameOver = Game.checkGrid();
+			
+			
 		}
 	}
 
