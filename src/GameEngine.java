@@ -1,14 +1,12 @@
 import java.util.HashMap;
 
 /**
- * 
  * @author Shantanu Singh and Shreshth Kharbanda Advanced Programming Topics
- *         Period 3 TicTacToe
- * 
- *         The GameEngine class is responsible for handling all of the games
- *         logical components, such as checking for winner and resetting the
- *         game and its values.
- * 
+ * Period 3 TicTacToe
+ * <p>
+ * The GameEngine class is responsible for handling all of the games
+ * logical components, such as checking for winner and resetting the
+ * game and its values.
  */
 
 public class GameEngine {
@@ -24,13 +22,13 @@ public class GameEngine {
 
 	// Array map holds the spots already occupied on the board
 	static int[] map;
-	static String[] shapes = { "X", "O" };
+	static String[] shapes = {"X", "O"};
 	public HashMap<Integer, String> moves;
 
 	/**
 	 * Main Method is responsible for initializing the GameUI object, as well as set
 	 * the onClick event handler. Calls startGame method to start the game.
-	 * 
+	 *
 	 * @param args parameter passed into main method
 	 */
 	public static void main(String[] args) {
@@ -44,17 +42,34 @@ public class GameEngine {
 	/**
 	 * getMap Method allows other classes to access the array filled with the
 	 * postions of each shape.
-	 * 
+	 *
 	 * @return map - Array containing all spots that have already have a shape
 	 */
 	public static int[] getMap() {
 		return map;
 	}
 
+	public static void closePrev() {
+		panel.setVisible(false);
+	}
+
+	public static void updateMap(int index, int value) {
+		map[index] = value;
+	}
+
+	public static boolean checkGrid() {
+		try {
+			return winCombos();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return false;
+		}
+	}
+
 	/**
 	 * winCombos Methods is called upon when needing to check if there is a winner,
 	 * calls upon three helper methods to split the task of checking.
-	 * 
+	 *
 	 * @return boolean - boolean represents whether the game should end or continue.
 	 */
 	public static boolean winCombos() {
@@ -71,12 +86,11 @@ public class GameEngine {
 	}
 
 	/**
-	 * 
 	 * checkRows Methods is a helper method that helps check for a winner in all
 	 * rows.
-	 * 
+	 *
 	 * @return boolean = boolean representing whether the it found a winning combo
-	 *         or not
+	 * or not
 	 */
 	private static boolean checkRows() {
 		// Checks all possible row combinations for a win
@@ -94,15 +108,14 @@ public class GameEngine {
 	}
 
 	/**
-	 * 
 	 * checkCols Methods is a helper method that helps check for a winner in all
 	 * columns.
-	 * 
+	 *
 	 * @return boolean = boolean representing whether the it found a winning combo
-	 *         or not
+	 * or not
 	 */
 	private static boolean checkCols() {
-		// Checks all possible column combonations for a win
+		// Checks all possible column combinations for a win
 		if ((map[0] != 0) && map[0] == (map[3]) && map[3] == (map[6])) {
 			winner = shapes[map[0] - 1];
 			return true;
@@ -117,12 +130,11 @@ public class GameEngine {
 	}
 
 	/**
-	 * 
 	 * checkDiag Method is a helper method that checks both diagonal win
 	 * combinations.
-	 * 
+	 *
 	 * @return boolean = boolean representing whether the it found a winning combo
-	 *         or not
+	 * or not
 	 */
 	private static boolean checkDiag() {
 		// Checks all possible win combos diagonally
@@ -139,9 +151,9 @@ public class GameEngine {
 	/**
 	 * checkDraw method is a helper method that also helps in checking for if the
 	 * game has ended in a draw
-	 * 
+	 *
 	 * @return boolean = boolean representing whether the it found a draw combo or
-	 *         not
+	 * not
 	 */
 	private static boolean checkDraw() {
 		/*
@@ -169,5 +181,4 @@ public class GameEngine {
 		board.drawGrid();
 
 	}
-
 }
