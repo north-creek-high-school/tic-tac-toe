@@ -6,17 +6,13 @@ public class Cup {
 
 	private int currentToken = -1;
 
-	public Cup() {
+	public Cup(int[] map) {
 		chips = new LinkedList<>();
-		chips.add(0);
-		chips.add(1);
-		chips.add(2);
-		chips.add(3);
-		chips.add(4);
-		chips.add(5);
-		chips.add(6);
-		chips.add(7);
-		chips.add(8);
+		for(int i = 0; i < map.length; i++) {
+			if(map[i] == 0) {
+				chips.add(i);
+			}
+		}
 	}
 
 	public void learn(boolean won) {

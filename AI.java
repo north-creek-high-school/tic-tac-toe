@@ -9,16 +9,14 @@ public class AI {
 	public AI() {
 		super();
 		possibleMoves = new HashMap<>();
-		
-		for(int i = 0; i < Math.pow(3, 9); i++) {
-			possibleMoves.put(arg0, arg1);
-		}
 	}
 
-	public int makeMove(int[] movesAvailable) {
-		Cup moves = possibleMoves.get(movesAvailable);
-//		possibleMoves.put(movesAvailable, moves);
-	
+	public int makeMove(int[] map) {
+		Cup moves = possibleMoves.get(map);
+		if(moves == null) {
+			moves = new Cup(map);
+		}
+		possibleMoves.put(map, moves);
 		return moves.pickRandom();
 	}
 
@@ -26,4 +24,5 @@ public class AI {
 //		for (int i = 0; i < cups.size(); i++) {
 //			cups.get(i).learn(won);
 //			System.out.println(i + " = " + cups.get(i));
-//		}
+	}
+}
