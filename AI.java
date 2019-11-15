@@ -17,7 +17,6 @@ public class AI {
 			moves = new Cup(map);
 		}
 		possibleMoves.put(map, moves);
-
 		return moves.pickRandom();
 	}
 
@@ -25,6 +24,5 @@ public class AI {
 //		for (int i = 0; i < cups.size(); i++) {
 //			cups.get(i).learn(won);
 //			System.out.println(i + " = " + cups.get(i));
-//		}
 	}
 }

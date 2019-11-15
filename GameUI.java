@@ -14,7 +14,7 @@ import java.awt.*;
 import javax.swing.JOptionPane;
 
 public class GameUI {
-
+  
     // set custom font
     public static final int TEXTSIZE = 175;
 
@@ -141,4 +141,5 @@ public class GameUI {
             System.exit(0);
         }
     }
+
 }
