@@ -11,6 +11,7 @@
  */
 
 import java.awt.*;
+import java.util.Arrays;
 import javax.swing.JOptionPane;
 
 public class GameUI {
@@ -38,6 +39,7 @@ public class GameUI {
 	private DrawingPanel panel = new DrawingPanel(xSize, ySize);
 	// initializes the graphics of the panel to g
 	private Graphics g = getPanel().getGraphics();
+	private GameEngine engine = new GameEngine();
 	private AI ai = new AI();
 
 	// Constructor for GameUI, which draws an empty 3x3 grid.
@@ -87,16 +89,18 @@ public class GameUI {
 			g.setFont(new Font("Arial", Font.BOLD, TEXTSIZE));
 
 			// if there is no value there, draw the shape in the corresponding cell
-			if (GameEngine.getMap()[cell] == 0) {
+			if (engine.getMap()[cell] == 0) {
 				g.drawString(shape, (cellX * (xSize / 3)) + 15, (cellY * (ySize / 3)) + 135);
-				GameEngine.updateMap(cell, shape.equals("X") ? 1 : 2);
+				engine.updateMap(cell, shape.equals("X") ? 1 : 2);
 				// change the shape variable
+				System.out.println(Arrays.toString(engine.getMap()));
 				shape = shape.equals("X") ? "O" : "X";
+				System.out.println(Arrays.toString(engine.getMap()));
 			} else {
 				return;
 			}
 			// check if a user won, or it is a draw
-			isGameOver = GameEngine.winCombos();
+			isGameOver = engine.winCombos();
 		}
 		if (isGameOver) {
 			// if game is over, ask user to play again
@@ -105,19 +109,22 @@ public class GameUI {
 
 		// ======================================================================================
 		if (!isGameOver) {
-			int move = ai.makeMove(GameEngine.getMap());
-			int moveX = move / 3;
+			BoardConfig board = new BoardConfig(engine.getMap());
+			int move = ai.makeMove(board);
+			int moveX = move %  3;
 			int moveY = move / 3;
 			System.out.println("(" + moveX + ", " + moveY + "): " + move);
 
 			g.drawString(shape, (moveX * (xSize / 3)) + 15, (moveY * (ySize / 3)) + 135);
-			GameEngine.updateMap(move, shape.equals("X") ? 1 : 2);
+			System.out.println(Arrays.toString(engine.getMap()));
+			engine.updateMap(move, shape.equals("X") ? 1 : 2);
+			System.out.println(Arrays.toString(engine.getMap()));
 
 			// change the shape variable
 			shape = shape.equals("X") ? "O" : "X";
 
 			// check if a user won, or it is a draw
-			isGameOver = GameEngine.winCombos();
+			isGameOver = engine.winCombos();
 		}
 		if (isGameOver) {
 			// if game is over, ask user to play again
@@ -136,7 +143,7 @@ public class GameUI {
 				JOptionPane.YES_NO_OPTION);
 		if (answer == 0) {
 			isGameOver = false;
-			GameEngine.startGame();
+			engine.startGame();
 		} else {
 			System.exit(0);
 		}

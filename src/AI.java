@@ -1,5 +1,6 @@
 import java.awt.Font;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -11,12 +12,13 @@ public class AI {
 		possibleMoves = new HashMap<>();
 	}
 
-	public int makeMove(int[] map) {
-		Cup moves = possibleMoves.get(map);
+	public int makeMove(BoardConfig board) {
+		Cup moves = possibleMoves.get(board.getConfig());
 		if(moves == null) {
-			moves = new Cup(map);
+			moves = new Cup(board.getConfig());
 		}
-		possibleMoves.put(map, moves);
+		System.out.println(Arrays.toString(board.getConfig())+ " " + board.getConfig());
+		possibleMoves.put(board.getConfig(), moves);
 		return moves.pickRandom();
 	}
 
