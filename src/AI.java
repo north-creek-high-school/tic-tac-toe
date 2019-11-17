@@ -12,13 +12,14 @@ public class AI {
 		possibleMoves = new HashMap<>();
 	}
 
-	public int makeMove(BoardConfig board) {
-		Cup moves = possibleMoves.get(board.getConfig());
+	public int chooseMove(BoardConfig board) {
+	    int[] map = board.getConfig();
+		Cup moves = possibleMoves.get(map);
 		if(moves == null) {
-			moves = new Cup(board.getConfig());
+			moves = new Cup(map);
 		}
-		System.out.println(Arrays.toString(board.getConfig())+ " " + board.getConfig());
-		possibleMoves.put(board.getConfig(), moves);
+		System.out.println(Arrays.toString(board.getConfig())+ " " + map);
+		possibleMoves.put(map, moves);
 		return moves.pickRandom();
 	}
 
