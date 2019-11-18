@@ -56,3 +56,4 @@ public class AI {
 		this.recentPlays = new HashSet<>();
 	}
 }
+
