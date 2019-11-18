@@ -84,7 +84,10 @@ public class GameUI {
 
 		didMove = makePlayerMove(x,y,false);
 		isGameOver = engine.winCombos();
-		if (isGameOver) { playAgain(this.winner);}
+		if (isGameOver) {
+			playAgain(this.winner);
+			return;
+		}
 		if(!didMove){ return; }
 
 		makePlayerMove(x,y,true);
@@ -135,6 +138,12 @@ public class GameUI {
 				JOptionPane.YES_NO_OPTION);
 		if (answer == 0) {
 			isGameOver = false;
+			if(winner.charAt(0) == 'O'){
+				ai.learn(true);
+			}else{
+				ai.learn(false);
+			}
+			ai.clearPlays();
 			GameEngine.startGame();
 		} else {
 			System.exit(0);
