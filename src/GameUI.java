@@ -39,9 +39,13 @@ public class GameUI {
 	private DrawingPanel panel = new DrawingPanel(xSize, ySize);
 	// initializes the graphics of the panel to g
 	private Graphics g = getPanel().getGraphics();
+<<<<<<< Updated upstream
 	private static GameEngine engine = new GameEngine();
 	private AI ai = new AI();
 	BoardConfig board;
+=======
+	private GameEngine engine = new GameEngine();
+>>>>>>> Stashed changes
 
 	// Constructor for GameUI, which draws an empty 3x3 grid.
 	GameUI() {
@@ -104,6 +108,7 @@ public class GameUI {
 	}
 
 	private boolean makePlayerMove(int x, int y, boolean isAI) {
+<<<<<<< Updated upstream
 		int move = 0;
 		int moveX = 0;
 		int moveY = 0;
@@ -121,12 +126,20 @@ public class GameUI {
 				return false;
 			}
 		}
+=======
+>>>>>>> Stashed changes
 
 		g.setFont(new Font("Arial", Font.BOLD, TEXTSIZE));
+		int[] moveDimensions = GameEngine.players[0].makePlayerMove(x, y);
 
 		if (!isGameOver) {
+<<<<<<< Updated upstream
 			g.drawString(shape, (moveX * (xSize / 3)) + 15, (moveY * (ySize / 3)) + 135);
 			engine.updateMap(move, shape.equals("X") ? 1 : 2);
+=======
+			g.drawString(shape, (moveDimensions[0] * (xSize / 3)) + 15, (moveDimensions[1] * (ySize / 3)) + 135);
+			GameEngine.updateMap(moveDimensions[2], shape.equals("X") ? 1 : 2);
+>>>>>>> Stashed changes
 
 			// change the shape variable
 			shape = shape.equals("X") ? "O" : "X";
@@ -142,15 +155,21 @@ public class GameUI {
 	 */
 	private void playAgain(String winner) {
 		int answer = JOptionPane.showConfirmDialog(null, "Would you like to play again?", winner,
-				JOptionPane.YES_NO_OPTION);
+				  JOptionPane.YES_NO_OPTION);
 		if (answer == 0) {
 			isGameOver = false;
 			if (winner.charAt(0) == 'O') {
+<<<<<<< Updated upstream
 				ai.learn(true);
 			} else {
 				ai.learn(false);
+=======
+				((AI) (GameEngine.players[1])).learn(true);
+			} else {
+				((AI) (GameEngine.players[1])).learn(false);
+>>>>>>> Stashed changes
 			}
-			ai.clearPlays();
+			((AI) (GameEngine.players[1])).clearPlays();
 			GameEngine.startGame();
 		} else {
 			System.exit(0);

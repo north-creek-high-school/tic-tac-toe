@@ -3,22 +3,25 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-public class AI {
+public class AI extends Player {
 	public HashMap<int[], Cup> possibleMoves;
 	private HashSet<int[]> recentPlays;
 
-	public AI() {
-		super();
+	public AI(String name) {
+		super(name);
 		possibleMoves = new HashMap<>();
 		recentPlays = new HashSet<>();
 	}
 
 	public int chooseMove(BoardConfig board) {
+<<<<<<< Updated upstream
 		System.out.println("-----------Current Moves----------");
 		for (Map.Entry<int[], Cup> entry : possibleMoves.entrySet()) {
 			System.out.println(entry.getValue().toString());
 		}
 		System.out.println("---------------------------------");
+=======
+>>>>>>> Stashed changes
 		Cup moves = null;
 		for (Map.Entry<int[], Cup> entry : possibleMoves.entrySet()) {
 			if (Arrays.equals(entry.getKey(), board.getConfig())) {
@@ -52,6 +55,7 @@ public class AI {
 		}
 	}
 
+<<<<<<< Updated upstream
 	public AI train(BoardConfig board) {
 		int player = 1;
 		AI playerAI = new AI();
@@ -75,6 +79,8 @@ public class AI {
 		return playerAI;
 	}
 
+=======
+>>>>>>> Stashed changes
 	public void clearPlays() {
 		this.recentPlays = new HashSet<>();
 	}

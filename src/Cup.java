@@ -1,4 +1,5 @@
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Cup {
 
@@ -9,8 +10,8 @@ public class Cup {
 
 	public Cup(int[] map) {
 		chips = new LinkedList<>();
-		for(int i = 0; i < map.length; i++) {
-			if(map[i] == 0) {
+		for (int i = 0; i < map.length; i++) {
+			if (map[i] == 0) {
 				chips.add(i);
 			}
 		}
@@ -37,18 +38,18 @@ public class Cup {
 	 *
 	 * @param won tells whether the game was won by the AI this cup belongs to
 	 */
-	public Cup  adjustChips(boolean won) {
+	public Cup adjustChips(boolean won) {
 		/*
 		 * If game was won, chip removed by setMoveTaken will be replaced,
 		 * and another chip of that type will be added as a reward
 		 */
-		if(won) {
+		if (won) {
 			chips.add(moveTaken);
 			chips.add(moveTaken);
 			//If game was lost, the chip removed by setMoveTaken will remain removed
 		} else {
 			//if there is no instance of that chip left after removing, chip will be replaced
-			if(!chips.contains(moveTaken)) {
+			if (!chips.contains(moveTaken)) {
 				chips.add(moveTaken);
 			}
 		}

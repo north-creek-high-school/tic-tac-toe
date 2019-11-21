@@ -1,5 +1,3 @@
-import java.util.HashMap;
-
 /**
  * @author Shantanu Singh and Shreshth Kharbanda Advanced Programming Topics
  *         Period 3 TicTacToe
@@ -21,9 +19,18 @@ public class GameEngine {
 	private static String winner;
 
 	// Array map holds the spots already occupied on the board
+<<<<<<< Updated upstream
 	static int[] map;
 	static String[] shapes = { "X", "O" };
 	public HashMap<Integer, String> moves;
+=======
+	private static int[] map;
+	private static String[] shapes = {"X", "O"};
+	public static Player[] players = new Player[2];
+//	public static AI ai = new AI();
+//	Player player1 = new Player();
+//	Player ai = new AI();
+>>>>>>> Stashed changes
 
 	/**
 	 * Main Method is responsible for initializing the GameUI object, as well as set
@@ -32,6 +39,10 @@ public class GameEngine {
 	 * @param args parameter passed into main method
 	 */
 	public static void main(String[] args) {
+		players[0] = new Player("Player");
+		players[1] = new AI("Player AI");
+		players[2] = new AI("Trainer AI");
+
 		board = new GameUI();
 		panel = board.getPanel();
 		panel.onClick((x, y) -> board.drawShape(x, y));
@@ -179,10 +190,18 @@ public class GameEngine {
 		board.shape = "X";
 		// Tells GameUi object board to draw a new empty grid
 		board.drawGrid();
-
 	}
+<<<<<<< Updated upstream
 	
 	public static String getBoardMessage() {
 		return board.winner;
 	}
+=======
+
+//	private void trainAI() {
+//		for (int i = 0; i < 10000; i++) {
+//			((AI) (GameEngine.players[1])).chooseMove(BoardConfig.getConfig());
+//		}
+//	}
+>>>>>>> Stashed changes
 }
