@@ -1,14 +1,12 @@
 import java.util.HashMap;
 
-import javax.swing.JOptionPane;
-
 /**
  * @author Shantanu Singh and Shreshth Kharbanda Advanced Programming Topics
- *         Period 3 TicTacToe
- *         <p>
- *         The GameEngine class is responsible for handling all of the games
- *         logical components, such as checking for winner and resetting the
- *         game and its values.
+ * Period 3 TicTacToe
+ * <p>
+ * The GameEngine class is responsible for handling all of the games
+ * logical components, such as checking for winner and resetting the
+ * game and its values.
  */
 
 public class GameEngine {
@@ -23,16 +21,9 @@ public class GameEngine {
 	private static String winner;
 
 	// Array map holds the spots already occupied on the board
-	private static int[] map = new int[9];
-	private static String[] shapes = { "X", "O" };
-	public static Player[] players = new Player[3];
+	static int[] map;
+	static String[] shapes = {"X", "O"};
 	public HashMap<Integer, String> moves;
-
-	private static GameEngine game;
-
-	// initializes variable isGameOver to false, it changes to true when a user wins
-	// or the game ends in a draw
-	private boolean isGameOver = false;
 
 	/**
 	 * Main Method is responsible for initializing the GameUI object, as well as set
@@ -41,27 +32,11 @@ public class GameEngine {
 	 * @param args parameter passed into main method
 	 */
 	public static void main(String[] args) {
-		game = new GameEngine();
-
-		players[0] = new Player("Player");
-		players[1] = new AI("Player AI");
-		players[2] = new AI("Trainer AI");
-
 		board = new GameUI();
-		game.players[1] = ((AI) game.players[1]).train();
-
 		panel = board.getPanel();
-		panel.onClick((x, y) -> onClick(x, y, ((AI) game.players[1])));
+		panel.onClick((x, y) -> board.drawShape(x, y));
 
 		startGame();
-	}
-
-	private static void onClick(int x, int y, AI ai) {
-		board.drawShape(x, y, ((AI) game.players[1]));
-		game.isGameOver = winCombos();
-		if (game.isGameOver) {
-			game.playAgain(winner);
-		}
 	}
 
 	/**
@@ -104,7 +79,7 @@ public class GameEngine {
 			return true;
 			// Checks for if there is a draw in the game
 		} else if (checkDraw()) {
-			board.winner = "It's a Draw";
+			board.winner = "Its a Draw";
 			return true;
 		}
 		return false;
@@ -115,7 +90,7 @@ public class GameEngine {
 	 * rows.
 	 *
 	 * @return boolean = boolean representing whether the it found a winning combo
-	 *         or not
+	 * or not
 	 */
 	private static boolean checkRows() {
 		// Checks all possible row combinations for a win
@@ -137,7 +112,7 @@ public class GameEngine {
 	 * columns.
 	 *
 	 * @return boolean = boolean representing whether the it found a winning combo
-	 *         or not
+	 * or not
 	 */
 	private static boolean checkCols() {
 		// Checks all possible column combinations for a win
@@ -159,7 +134,7 @@ public class GameEngine {
 	 * combinations.
 	 *
 	 * @return boolean = boolean representing whether the it found a winning combo
-	 *         or not
+	 * or not
 	 */
 	private static boolean checkDiag() {
 		// Checks all possible win combos diagonally
@@ -178,7 +153,7 @@ public class GameEngine {
 	 * game has ended in a draw
 	 *
 	 * @return boolean = boolean representing whether the it found a draw combo or
-	 *         not
+	 * not
 	 */
 	private static boolean checkDraw() {
 		/*
@@ -204,33 +179,6 @@ public class GameEngine {
 		board.shape = "X";
 		// Tells GameUi object board to draw a new empty grid
 		board.drawGrid();
-	}
 
-	public static String getBoardMessage() {
-		return board.winner;
-	}
-
-	/**
-	 * playAgain asks the user if they would like to play again. If they would like
-	 * to, the game is reset
-	 *
-	 * @param winner who won the game
-	 */
-	private void playAgain(String winner) {
-		int answer = JOptionPane.showConfirmDialog(null, "Would you like to play again?", winner,
-				JOptionPane.YES_NO_OPTION);
-		if (answer == 0) {
-			isGameOver = false;
-			if (winner.charAt(0) == 'O') {
-				((AI) players[1]).learn(true);
-			} else {
-				((AI) players[1]).learn(false);
-				((AI) (GameEngine.players[1])).learn(true);
-			}
-			((AI) (GameEngine.players[1])).clearPlays();
-			GameEngine.startGame();
-		} else {
-			System.exit(0);
-		}
 	}
 }

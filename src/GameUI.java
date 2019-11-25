@@ -1,4 +1,3 @@
-
 /**
  * @author Shantanu Singh and Shreshth Kharbanda
  * Advance Programming Topics
@@ -30,19 +29,20 @@ public class GameUI {
 	public String shape = "X";
 	// defines the winner variable
 	String winner = "";
+	// initializes variable isGameOver to false, it changes to true when a user wins
+	// or the game ends in a draw
+	private boolean isGameOver = false;
 
-	// creates a DrawingPanel with the dimensions, and initializes it to variable
-	// panel
+	// creates a DrawingPanel with the dimensions, and initializes it to variable panel
 	private DrawingPanel panel = new DrawingPanel(xSize, ySize);
 	// initializes the graphics of the panel to g
 	private Graphics g = getPanel().getGraphics();
-	private static GameEngine engine = new GameEngine();
-	private BoardConfig board;
+	private GameEngine engine = new GameEngine();
+	private AI ai = new AI();
 
 	// Constructor for GameUI, which draws an empty 3x3 grid.
 	GameUI() {
 		drawGrid();
-		board = new BoardConfig(engine.getMap());
 	}
 
 	/**
@@ -77,50 +77,76 @@ public class GameUI {
 	 * @param x the x coordinate of the mouse click
 	 * @param y the y coordinate of the mouse click
 	 */
-	public void drawShape(int x, int y, AI ai) {
+	public void drawShape(int x, int y) {
 
 		boolean didMove;
 
-		didMove = makePlayerMove(x, y);
-		if (!didMove) {
+		didMove = makePlayerMove(x,y,false);
+		isGameOver = engine.winCombos();
+		if (isGameOver) {
+			playAgain(this.winner);
 			return;
 		}
+		if(!didMove){ return; }
 
-		makePlayerMove(x, y, ai);
+		makePlayerMove(x,y,true);
+		isGameOver = engine.winCombos();
+		if (isGameOver) { playAgain(this.winner); }
 	}
 
-	private boolean makePlayerMove(int x, int y, AI ai) {
+	private boolean makePlayerMove(int x, int y, boolean isAI) {
+		int move = 0;
+		int moveX = 0;
+		int moveY = 0;
 
-		board = new BoardConfig(engine.getMap());
-		int move = ai.chooseMove(board);
-		int moveX = move % 3;
-		int moveY = move / 3;
+		if (isAI) {
+			BoardConfig board = new BoardConfig(engine.getMap());
+			move = ai.chooseMove(board);
+			moveX = move % 3;
+			moveY = move / 3;
+		} else {
+			moveX = (x / 150);
+			moveY = (y / 150);
+			move = moveX + (moveY * 3);
+			if(engine.getMap()[move] != 0){
+				return false;
+			}
+		}
 
 		g.setFont(new Font("Arial", Font.BOLD, TEXTSIZE));
-		g.drawString(shape, (moveX * (xSize / 3)) + 15, (moveY * (ySize / 3)) + 135);
 
-		GameEngine.updateMap(move, shape.equals("X") ? 1 : 2);
+		if (!isGameOver) {
 
-		// change the shape variable
-		shape = shape.equals("X") ? "O" : "X";
+			g.drawString(shape, (moveX * (xSize / 3)) + 15, (moveY * (ySize / 3)) + 135);
+			engine.updateMap(move, shape.equals("X") ? 1 : 2);
+
+			// change the shape variable
+			shape = shape.equals("X") ? "O" : "X";
+		}
 		return true;
 	}
 
-	private boolean makePlayerMove(int x, int y) {
-		g.setFont(new Font("Arial", Font.BOLD, TEXTSIZE));
-		int[] moveDimensions = GameEngine.players[0].makePlayerMove(x, y);
-		if (moveDimensions[0] == -1)
-			return false;
-		g.drawString(shape, (moveDimensions[0] * (xSize / 3)) + 15, (moveDimensions[1] * (ySize / 3)) + 135);
-		GameEngine.updateMap(moveDimensions[2], shape.equals("X") ? 1 : 2);
-
-		// change the shape variable
-		shape = shape.equals("X") ? "O" : "X";
-		return true;
-	}
-
-	public static GameEngine getEngine() {
-		return engine;
+	/**
+	 * playAgain asks the user if they would like to play again. If they would like
+	 * to, the game is reset
+	 *
+	 * @param winner who won the game
+	 */
+	private void playAgain(String winner) {
+		int answer = JOptionPane.showConfirmDialog(null, "Would you like to play again?", winner,
+				JOptionPane.YES_NO_OPTION);
+		if (answer == 0) {
+			isGameOver = false;
+			if(winner.charAt(0) == 'O'){
+				ai.learn(true);
+			}else{
+				ai.learn(false);
+			}
+			ai.clearPlays();
+			GameEngine.startGame();
+		} else {
+			System.exit(0);
+		}
 	}
 
 }
