@@ -1,54 +1,18 @@
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Cup {
 
 	private List<Integer> chips;
+	private int moveTaken;
 
 	private int currentToken = -1;
 
 	public Cup(int[] map) {
 		chips = new LinkedList<>();
-		for(int i = 0; i < map.length; i++) {
-			if(map[i] == 0) {
+		for (int i = 0; i < map.length; i++) {
+			if (map[i] == 0) {
 				chips.add(i);
-			}
-		}
-	}
-
-	public void learn(boolean won) {
-		if (currentToken == -1)
-			return;
-
-		if (won) {
-			chips.add(currentToken);
-		} else {
-			chips.remove(currentToken);
-			if (!chips.contains(0)) {
-				chips.add(0);
-			}
-			if (!chips.contains(1)) {
-				chips.add(1);
-			}
-			if (!chips.contains(2)) {
-				chips.add(2);
-			}
-			if (!chips.contains(3)) {
-				chips.add(3);
-			}
-			if (!chips.contains(4)) {
-				chips.add(4);
-			}
-			if (!chips.contains(5)) {
-				chips.add(5);
-			}
-			if (!chips.contains(6)) {
-				chips.add(6);
-			}
-			if (!chips.contains(7)) {
-				chips.add(7);
-			}
-			if (!chips.contains(8)) {
-				chips.add(8);
 			}
 		}
 	}
@@ -62,4 +26,34 @@ public class Cup {
 	public String toString() {
 		return chips.toString();
 	}
+
+	public void setMoveTaken(int moveTaken) {
+		this.moveTaken = moveTaken;
+		this.chips.remove(Integer.valueOf(moveTaken));
+	}
+
+	/**
+	 * This method adjusts the number of chips of each type depending on
+	 * whether the game was won or lost by the AI this cup belongs to.
+	 *
+	 * @param won tells whether the game was won by the AI this cup belongs to
+	 */
+	public Cup adjustChips(boolean won) {
+		/*
+		 * If game was won, chip removed by setMoveTaken will be replaced,
+		 * and another chip of that type will be added as a reward
+		 */
+		if (won) {
+			chips.add(moveTaken);
+			chips.add(moveTaken);
+			//If game was lost, the chip removed by setMoveTaken will remain removed
+		} else {
+			//if there is no instance of that chip left after removing, chip will be replaced
+			if (!chips.contains(moveTaken)) {
+				chips.add(moveTaken);
+			}
+		}
+		return this;
+	}
+
 }

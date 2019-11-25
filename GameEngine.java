@@ -1,184 +1,236 @@
 import java.util.HashMap;
 
+import javax.swing.JOptionPane;
+
 /**
  * @author Shantanu Singh and Shreshth Kharbanda Advanced Programming Topics
- * Period 3 TicTacToe
- * <p>
- * The GameEngine class is responsible for handling all of the games
- * logical components, such as checking for winner and resetting the
- * game and its values.
+ *         Period 3 TicTacToe
+ *         <p>
+ *         The GameEngine class is responsible for handling all of the games
+ *         logical components, such as checking for winner and resetting the
+ *         game and its values.
  */
 
 public class GameEngine {
 
-    /*
-     * These are all the class variables, made global to ease the process of passing
-     * them around in multiple methods. Simplifies the process by eliminating the
-     * step of creating parameters for each method that utilize these variables
-     */
-    private static GameUI board;
-    private static DrawingPanel panel;
-    private static String winner;
+	/*
+	 * These are all the class variables, made global to ease the process of passing
+	 * them around in multiple methods. Simplifies the process by eliminating the
+	 * step of creating parameters for each method that utilize these variables
+	 */
+	private static GameUI board;
+	private static DrawingPanel panel;
+	private static String winner;
 
-    // Array map holds the spots already occupied on the board
-    static int[] map;
-    static String[] shapes = {"X", "O"};
-    public HashMap<Integer, String> moves;
+	// Array map holds the spots already occupied on the board
+	private static int[] map = new int[9];
+	private static String[] shapes = { "X", "O" };
+	public static Player[] players = new Player[3];
+	public HashMap<Integer, String> moves;
 
-    /**
-     * Main Method is responsible for initializing the GameUI object, as well as set
-     * the onClick event handler. Calls startGame method to start the game.
-     *
-     * @param args parameter passed into main method
-     */
-    public static void main(String[] args) {
-        board = new GameUI();
-        panel = board.getPanel();
-        panel.onClick((x, y) -> board.drawShape(x, y));
+	private static GameEngine game;
 
-        startGame();
-    }
+	// initializes variable isGameOver to false, it changes to true when a user wins
+	// or the game ends in a draw
+	private boolean isGameOver = false;
 
-    /**
-     * getMap Method allows other classes to access the array filled with the
-     * postions of each shape.
-     *
-     * @return map - Array containing all spots that have already have a shape
-     */
-    public static int[] getMap() {
-        return map;
-    }
+	/**
+	 * Main Method is responsible for initializing the GameUI object, as well as set
+	 * the onClick event handler. Calls startGame method to start the game.
+	 *
+	 * @param args parameter passed into main method
+	 */
+	public static void main(String[] args) {
+		game = new GameEngine();
 
-    public static void closePrev() {
-        panel.setVisible(false);
-    }
+		players[0] = new Player("Player");
+		players[1] = new AI("Player AI");
+		players[2] = new AI("Trainer AI");
 
-    public static void updateMap(int index, int value) {
-        map[index] = value;
-    }
+		board = new GameUI();
+		game.players[1] = ((AI) game.players[1]).train();
 
-    public static boolean checkGrid() {
-        try {
-            return winCombos();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return false;
-        }
-    }
+		panel = board.getPanel();
+		panel.onClick((x, y) -> onClick(x, y, ((AI) game.players[1])));
 
-    /**
-     * winCombos Methods is called upon when needing to check if there is a winner,
-     * calls upon three helper methods to split the task of checking.
-     *
-     * @return boolean - boolean represents whether the game should end or continue.
-     */
-    public static boolean winCombos() {
-        // Checks if there is a win in any row or column or diagonal
-        if (checkRows() || checkCols() || checkDiag()) {
-            board.winner = winner + " Wins!";
-            return true;
-            // Checks for if there is a draw in the game
-        } else if (checkDraw()) {
-            board.winner = "Its a Draw";
-            return true;
-        }
-        return false;
-    }
+		startGame();
+	}
 
-    /**
-     * checkRows Methods is a helper method that helps check for a winner in all
-     * rows.
-     *
-     * @return boolean = boolean representing whether the it found a winning combo
-     * or not
-     */
-    private static boolean checkRows() {
-        // Checks all possible row combinations for a win
-        if ((map[0] != 0) && (map[0] == (map[1]) && map[1] == (map[2]))) {
-            winner = shapes[map[0] - 1];
-            return true;
-        } else if ((map[3] != 0) && map[3] == (map[4]) && map[4] == (map[5])) {
-            winner = shapes[map[3] - 1];
-            return true;
-        } else if ((map[6] != 0) && map[6] == (map[7]) && map[7] == (map[8])) {
-            winner = shapes[map[6] - 1];
-            return true;
-        }
-        return false;
-    }
+	private static void onClick(int x, int y, AI ai) {
+		board.drawShape(x, y, ((AI) game.players[1]));
+		game.isGameOver = winCombos();
+		if (game.isGameOver) {
+			game.playAgain(winner);
+		}
+	}
 
-    /**
-     * checkCols Methods is a helper method that helps check for a winner in all
-     * columns.
-     *
-     * @return boolean = boolean representing whether the it found a winning combo
-     * or not
-     */
-    private static boolean checkCols() {
-        // Checks all possible column combinations for a win
-        if ((map[0] != 0) && map[0] == (map[3]) && map[3] == (map[6])) {
-            winner = shapes[map[0] - 1];
-            return true;
-        } else if ((map[1] != 0) && map[1] == (map[4]) && map[4] == (map[7])) {
-            winner = shapes[map[1] - 1];
-            return true;
-        } else if ((map[2] != 0) && map[2] == (map[5]) && map[5] == (map[8])) {
-            winner = shapes[map[2] - 1];
-            return true;
-        }
-        return false;
-    }
+	/**
+	 * getMap Method allows other classes to access the array filled with the
+	 * postions of each shape.
+	 *
+	 * @return map - Array containing all spots that have already have a shape
+	 */
+	public static int[] getMap() {
+		return map;
+	}
 
-    /**
-     * checkDiag Method is a helper method that checks both diagonal win
-     * combinations.
-     *
-     * @return boolean = boolean representing whether the it found a winning combo
-     * or not
-     */
-    private static boolean checkDiag() {
-        // Checks all possible win combos diagonally
-        if ((map[0] != 0) && map[0] == (map[4]) && map[4] == (map[8])) {
-            winner = shapes[map[0] - 1];
-            return true;
-        } else if ((map[2] != 0) && map[2] == (map[4]) && map[4] == (map[6])) {
-            winner = shapes[map[2] - 1];
-            return true;
-        }
-        return false;
-    }
+	public static void closePrev() {
+		panel.setVisible(false);
+	}
 
-    /**
-     * checkDraw method is a helper method that also helps in checking for if the
-     * game has ended in a draw
-     *
-     * @return boolean = boolean representing whether the it found a draw combo or
-     * not
-     */
-    private static boolean checkDraw() {
-        /*
-         * For loop iterates through each element of Array map and checks to see if
-         * there are any open spots left, if so then it returns false
-         */
-        for (int i = 0; i < map.length; i++) {
-            if (map[i] == 0) {
-                return false;
-            }
-        }
-        return true;
-    }
+	public static void updateMap(int index, int value) {
+		map[index] = value;
+	}
 
-    /**
-     * startGame Method is responsible for setting up the grid and class variables
-     * to the correct state for a new game to start and function properly.
-     */
-    public static void startGame() {
-        // Starts off with setting the Array map back to all empty spots
-        map = new int[9];
-        // sets starting letter in class GameUI to "X"
-        board.shape = "X";
-        // Tells GameUi object board to draw a new empty grid
-        board.drawGrid();
+	public static boolean checkGrid() {
+		try {
+			return winCombos();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return false;
+		}
+	}
 
-    }
+	/**
+	 * winCombos Methods is called upon when needing to check if there is a winner,
+	 * calls upon three helper methods to split the task of checking.
+	 *
+	 * @return boolean - boolean represents whether the game should end or continue.
+	 */
+	public static boolean winCombos() {
+		// Checks if there is a win in any row or column or diagonal
+		if (checkRows() || checkCols() || checkDiag()) {
+			board.winner = winner + " Wins!";
+			return true;
+			// Checks for if there is a draw in the game
+		} else if (checkDraw()) {
+			board.winner = "It's a Draw";
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * checkRows Methods is a helper method that helps check for a winner in all
+	 * rows.
+	 *
+	 * @return boolean = boolean representing whether the it found a winning combo
+	 *         or not
+	 */
+	private static boolean checkRows() {
+		// Checks all possible row combinations for a win
+		if ((map[0] != 0) && (map[0] == (map[1]) && map[1] == (map[2]))) {
+			winner = shapes[map[0] - 1];
+			return true;
+		} else if ((map[3] != 0) && map[3] == (map[4]) && map[4] == (map[5])) {
+			winner = shapes[map[3] - 1];
+			return true;
+		} else if ((map[6] != 0) && map[6] == (map[7]) && map[7] == (map[8])) {
+			winner = shapes[map[6] - 1];
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * checkCols Methods is a helper method that helps check for a winner in all
+	 * columns.
+	 *
+	 * @return boolean = boolean representing whether the it found a winning combo
+	 *         or not
+	 */
+	private static boolean checkCols() {
+		// Checks all possible column combinations for a win
+		if ((map[0] != 0) && map[0] == (map[3]) && map[3] == (map[6])) {
+			winner = shapes[map[0] - 1];
+			return true;
+		} else if ((map[1] != 0) && map[1] == (map[4]) && map[4] == (map[7])) {
+			winner = shapes[map[1] - 1];
+			return true;
+		} else if ((map[2] != 0) && map[2] == (map[5]) && map[5] == (map[8])) {
+			winner = shapes[map[2] - 1];
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * checkDiag Method is a helper method that checks both diagonal win
+	 * combinations.
+	 *
+	 * @return boolean = boolean representing whether the it found a winning combo
+	 *         or not
+	 */
+	private static boolean checkDiag() {
+		// Checks all possible win combos diagonally
+		if ((map[0] != 0) && map[0] == (map[4]) && map[4] == (map[8])) {
+			winner = shapes[map[0] - 1];
+			return true;
+		} else if ((map[2] != 0) && map[2] == (map[4]) && map[4] == (map[6])) {
+			winner = shapes[map[2] - 1];
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * checkDraw method is a helper method that also helps in checking for if the
+	 * game has ended in a draw
+	 *
+	 * @return boolean = boolean representing whether the it found a draw combo or
+	 *         not
+	 */
+	private static boolean checkDraw() {
+		/*
+		 * For loop iterates through each element of Array map and checks to see if
+		 * there are any open spots left, if so then it returns false
+		 */
+		for (int i = 0; i < map.length; i++) {
+			if (map[i] == 0) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * startGame Method is responsible for setting up the grid and class variables
+	 * to the correct state for a new game to start and function properly.
+	 */
+	public static void startGame() {
+		// Starts off with setting the Array map back to all empty spots
+		map = new int[9];
+		// sets starting letter in class GameUI to "X"
+		board.shape = "X";
+		// Tells GameUi object board to draw a new empty grid
+		board.drawGrid();
+	}
+
+	public static String getBoardMessage() {
+		return board.winner;
+	}
+
+	/**
+	 * playAgain asks the user if they would like to play again. If they would like
+	 * to, the game is reset
+	 *
+	 * @param winner who won the game
+	 */
+	private void playAgain(String winner) {
+		int answer = JOptionPane.showConfirmDialog(null, "Would you like to play again?", winner,
+				JOptionPane.YES_NO_OPTION);
+		if (answer == 0) {
+			isGameOver = false;
+			if (winner.charAt(0) == 'O') {
+				((AI) players[1]).learn(true);
+			} else {
+				((AI) players[1]).learn(false);
+				((AI) (GameEngine.players[1])).learn(true);
+			}
+			((AI) (GameEngine.players[1])).clearPlays();
+			GameEngine.startGame();
+		} else {
+			System.exit(0);
+		}
+	}
 }
