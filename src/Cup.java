@@ -1,58 +1,84 @@
-import java.util.*;
+import java.util.Arrays;
 
 public class Cup {
-
-	private List<Integer> chips;
-	private int moveTaken;
-
-	private int currentToken = -1;
-
-	public Cup(int[] map) {
-		chips = new LinkedList<>();
-		for(int i = 0; i < map.length; i++) {
-			if(map[i] == 0) {
-				chips.add(i);
+	
+	// keeps track of the count of tokens for each of 9 possible moves
+	private int[] tokens = new int[9]; 
+	
+	// the total count of tokens
+	private int count = 0;
+	
+	// initialize to having never made a move
+	private int lastMove = -1;
+	
+	public Cup(Board board) {
+		// add the right number of tokens
+		int move = 0;
+		count = 0;
+		for (int row = 0; row < 3; row++) {
+			for (int col = 0; col < 3; col++) {
+				if (board.isValidMove(new Move(row, col))) {
+					tokens[move] = 1;
+					count++;
+				}
+				move++;
 			}
 		}
 	}
-
-	public int pickRandom() {
-		int rand = (int) (Math.random() * chips.size());
-		currentToken = chips.get(rand);
-		return currentToken;
-	}
-
+	
 	public String toString() {
-		return chips.toString();
+		return Arrays.toString(tokens);
 	}
-
-	public void setMoveTaken(int moveTaken) {
-		this.moveTaken = moveTaken;
-		this.chips.remove(Integer.valueOf(moveTaken));
+	
+	// as we loop through the count of tokens in this cup
+	// we can't change the tokens! No learning.
+	// We should be synchronized so that out count of tokens
+	// doesn't change as we loop through our tokens.
+	//
+	// Adding the keyword synchronized will make "this" object
+	// be the critical section for this entire method.
+	public synchronized int getAndForgetRandomMove() {
+		int move = 0;
+		int rand = (int) (Math.random() * count);
+		
+		// loop through our token count until we find the right "bucket"
+		while (rand >= tokens[move]) {
+			rand -= tokens[move];
+			move++;
+		}
+		
+		return move;
+	}
+	
+	/**
+	 * picks a random move from its tokens. Remembers the move.
+	 */
+	public int getRandomMove() {
+		// by assigning to this.lastMove, we remember the move
+		this.lastMove = getAndForgetRandomMove();
+		
+		return this.lastMove;
 	}
 
 	/**
-	 * This method adjusts the number of chips of each type depending on
-	 * whether the game was won or lost by the AI this cup belongs to.
-	 *
-	 * @param won tells whether the game was won by the AI this cup belongs to
+	 * this will put the token in or out, depending on if we won or lost.
+	 * We must always have at least 1 token present.
+	 * @param won true if the AI won the game and cup should add token.
 	 */
-	public Cup  adjustChips(boolean won) {
-		/*
-		 * If game was won, chip removed by setMoveTaken will be replaced,
-		 * and another chip of that type will be added as a reward
-		 */
-		if(won) {
-			chips.add(moveTaken);
-			chips.add(moveTaken);
-			//If game was lost, the chip removed by setMoveTaken will remain removed
-		} else {
-			//if there is no instance of that chip left after removing, chip will be replaced
-			if(!chips.contains(moveTaken)) {
-				chips.add(moveTaken);
-			}
+	public synchronized void learn(boolean won) {
+		if (lastMove == -1) {
+			// this cup didn't ever make a move
+			return;
 		}
-		return this;
+		
+		if (won) {
+			tokens[lastMove]++;
+			count++;
+		} else if (tokens[lastMove] > 1) {
+			count--;
+			tokens[lastMove]--;
+		}
+		
+		lastMove = -1;
 	}
-
 }
